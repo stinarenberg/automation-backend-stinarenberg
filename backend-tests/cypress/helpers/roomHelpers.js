@@ -20,6 +20,20 @@ function createRandomRoomPayload(){
     }
     return payload
 }
+function getAllRoomsRequest(cy){
+    cy.authenticateSession().then((response =>{
+        cy.request({
+            method: "GET",
+            url: ENDPOINT_GET_ROOMS,
+            headers:{
+                'X-User-Auth': JSON.stringify(Cypress.env().loginToken),
+                'Content-Type': 'application/json'
+            },
+        }).then((response =>{
+            expect(response.status).to.eq(200)
+        }))
+    }))
+}
 function getAllRoomsRequestWithAssertion(cy, category, number, features, floor, available, price){
     cy.authenticateSession().then((response =>{
         cy.request({
@@ -31,11 +45,11 @@ function getAllRoomsRequestWithAssertion(cy, category, number, features, floor, 
             },
         }).then((response =>{
             const responseAsString = JSON.stringify(response)
-            expect(responseAsString).to.have.string(category)
+            expect(responseAsString).to.have.string(category) //kanske ta bort - gör ingen nytta, finns flera "double" i kategori.
             expect(responseAsString).to.have.string(features)
             expect(responseAsString).to.have.string(number)
             expect(responseAsString).to.have.string(floor)
-            expect(responseAsString).to.have.string(available)
+            expect(responseAsString).to.have.string(available) //också ta bort?
             expect(responseAsString).to.have.string(price)
         }))
     }))
@@ -61,37 +75,51 @@ function createRoomRequest(cy){
     }))
 }
 function deleteRequestAfterGetRequest(cy){
-    cy.authenticateSession().then((response =>{
+    cy.request({
+        method: "GET",
+        url: ENDPOINT_GET_ROOMS,
+        headers:{
+            'X-User-Auth': JSON.stringify(Cypress.env().loginToken),
+            'Content-Type': 'application/json'
+        },
+    }).then((response =>{
+        let lastId=response.body[response.body.length-1].id
+        cy.log(lastId)
         cy.request({
-            method: "GET",
-            url: ENDPOINT_GET_ROOMS,
+            method:"DELETE",
+            url: ENDPOINT_GET_ROOM+lastId,
             headers:{
                 'X-User-Auth': JSON.stringify(Cypress.env().loginToken),
                 'Content-Type': 'application/json'
             },
-        }).then((response =>{
-            //const responseAsString = JSON.stringify(response)
-            cy.log(response)
-            let lastId=response.body[response.body.length-1].id
-            cy.log(lastId)
-            cy.request({
-                method:"DELETE",
-                url: ENDPOINT_GET_ROOM+lastId,
-                headers:{
-                    'X-User-Auth': JSON.stringify(Cypress.env().loginToken),
-                    'Content-Type': 'application/json'
-                },
-            }).then((response=>{
-                cy.log(response)
-            }))
+        }).then((response=>{
+            const responseAsString = JSON.stringify(response)
+            expect(responseAsString).to.have.string("true")
         }))
     }))
 }
-
-
-
+function deleteRequestAfterCreateRoomRequest(cy){
+    cy.authenticateSession().then((response =>{
+        let randomRoomPayload = createRandomRoomPayload()
+        //post request to create a room
+        cy.request({
+            method: "POST",
+            url: ENDPOINT_POST_ROOMS,
+            headers:{
+                'X-User-Auth': JSON.stringify(Cypress.env().loginToken),
+                'Content-Type': 'application/json'
+            },
+            body: randomRoomPayload
+        }).then((response =>{
+           //cy.log(JSON.stringify(response))
+           const responseAsString = JSON.stringify(response)
+           //expect(responseAsString).to.have.string(randomRoomPayload.number)
+        }))
+        deleteRequestAfterGetRequest(cy)
+    }))
+}
 module.exports ={
-    getAllRoomsRequestWithAssertion,
+    getAllRoomsRequest,
     createRoomRequest,
-    deleteRequestAfterGetRequest
+    deleteRequestAfterCreateRoomRequest
 }

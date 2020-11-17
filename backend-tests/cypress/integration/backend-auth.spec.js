@@ -1,14 +1,17 @@
 import * as roomHelpers from '../helpers/roomHelpers'
-
+import * as clientHelpers from '../helpers/clientHelpers'
 
 describe('testing auth', function(){
-    it('Get all rooms with assertions', function(){
-        roomHelpers.getAllRoomsRequestWithAssertion(cy)
+    it('01. Get all rooms with assertions', function(){
+        roomHelpers.getAllRoomsRequest(cy)
     })
-    it('Create a room', function(){
+    it('02. Create a room', function(){
         roomHelpers.createRoomRequest(cy)
     })
-    it.only('Delete a room', function(){
-        roomHelpers.deleteRequestAfterGetRequest(cy)
+    it('03. Delete a room', function(){
+        roomHelpers.deleteRequestAfterCreateRoomRequest(cy)
+    })
+    it('04. Edit client', function(){
+        clientHelpers.createAndEditClientRequest(cy)
     })
 })
