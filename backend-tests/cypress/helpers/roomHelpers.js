@@ -113,7 +113,7 @@ function deleteRequestAfterCreateRoomRequest(cy){
         }).then((response =>{
            //cy.log(JSON.stringify(response))
            const responseAsString = JSON.stringify(response)
-           //expect(responseAsString).to.have.string(randomRoomPayload.number)
+           expect(responseAsString).to.have.string(randomRoomPayload.number)
         }))
         deleteRequestAfterGetRequest(cy)
     }))

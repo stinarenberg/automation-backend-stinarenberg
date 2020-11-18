@@ -43,9 +43,6 @@ function getRequestAllClientsWithAssertion(cy, name, email, telephone){
         expect(responseAsString).to.have.string(name)
         expect(responseAsString).to.have.string(email)
         expect(responseAsString).to.have.string(telephone)
-
-        // cy.log(response.body[response.body.length -1].id)
-        // cy.log(response.body.length)
     }))
 }
 function createClientRequest(cy){
@@ -103,7 +100,7 @@ function createAndEditClientRequest(cy){
 }
 
 module.exports ={
-    createAndEditClientRequest
+    createAndEditClientRequest,
 }
 
 
