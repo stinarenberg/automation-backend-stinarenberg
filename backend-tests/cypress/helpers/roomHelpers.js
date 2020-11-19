@@ -34,7 +34,7 @@ function getAllRoomsRequest(cy){
         }))
     }))
 }
-function getAllRoomsRequestWithAssertion(cy, category, number, features, floor, available, price){
+function getAllRoomsRequestWithAssertion(cy, number, features, floor, price){
     cy.authenticateSession().then((response =>{
         cy.request({
             method: "GET",
@@ -45,11 +45,9 @@ function getAllRoomsRequestWithAssertion(cy, category, number, features, floor, 
             },
         }).then((response =>{
             const responseAsString = JSON.stringify(response)
-            expect(responseAsString).to.have.string(category) //kanske ta bort - gör ingen nytta, finns flera "double" i kategori.
             expect(responseAsString).to.have.string(features)
             expect(responseAsString).to.have.string(number)
             expect(responseAsString).to.have.string(floor)
-            expect(responseAsString).to.have.string(available) //också ta bort?
             expect(responseAsString).to.have.string(price)
         }))
     }))
@@ -57,7 +55,6 @@ function getAllRoomsRequestWithAssertion(cy, category, number, features, floor, 
 function createRoomRequest(cy){
     cy.authenticateSession().then((response =>{
         let randomRoomPayload = createRandomRoomPayload()
-        //post request to create a room
         cy.request({
             method: "POST",
             url: ENDPOINT_POST_ROOMS,
@@ -67,11 +64,10 @@ function createRoomRequest(cy){
             },
             body: randomRoomPayload
         }).then((response =>{
-           //cy.log(JSON.stringify(response))
            const responseAsString = JSON.stringify(response)
-           //expect(responseAsString).to.have.string(randomRoomPayload.number)
+           expect(responseAsString).to.have.string(randomRoomPayload.number)
         }))
-        getAllRoomsRequestWithAssertion(cy, randomRoomPayload.category, randomRoomPayload.number, randomRoomPayload.features, randomRoomPayload.floor, randomRoomPayload.available, randomRoomPayload.price)
+        getAllRoomsRequestWithAssertion(cy, randomRoomPayload.number, randomRoomPayload.features, randomRoomPayload.floor, randomRoomPayload.price)
     }))
 }
 function deleteRequestAfterGetRequest(cy){
@@ -84,7 +80,6 @@ function deleteRequestAfterGetRequest(cy){
         },
     }).then((response =>{
         let lastId=response.body[response.body.length-1].id
-        cy.log(lastId)
         cy.request({
             method:"DELETE",
             url: ENDPOINT_GET_ROOM+lastId,
@@ -101,7 +96,6 @@ function deleteRequestAfterGetRequest(cy){
 function deleteRequestAfterCreateRoomRequest(cy){
     cy.authenticateSession().then((response =>{
         let randomRoomPayload = createRandomRoomPayload()
-        //post request to create a room
         cy.request({
             method: "POST",
             url: ENDPOINT_POST_ROOMS,
@@ -111,7 +105,6 @@ function deleteRequestAfterCreateRoomRequest(cy){
             },
             body: randomRoomPayload
         }).then((response =>{
-           //cy.log(JSON.stringify(response))
            const responseAsString = JSON.stringify(response)
            expect(responseAsString).to.have.string(randomRoomPayload.number)
         }))

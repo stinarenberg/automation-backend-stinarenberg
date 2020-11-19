@@ -60,7 +60,7 @@ function createClientRequest(cy){
            const responseAsString = JSON.stringify(response)
            expect(responseAsString).to.have.string(fakeClientPayload.name)
         }))
-        getRequestAllClientsWithAssertion(cy, fakeClientPayload.name, fakeClientPayload.email,fakeClientPayload.telephone)
+        getRequestAllClientsWithAssertion(cy, fakeClientPayload.name, fakeClientPayload.email,fakeClientPayload.telephone) //ta bort?
     }))
 }
 
