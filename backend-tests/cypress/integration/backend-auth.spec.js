@@ -14,4 +14,7 @@ describe('testing auth', function(){
     it('04. Edit client', function(){
         clientHelpers.createAndEditClientRequest(cy)
     })
+    it('05. New test in new Branch', function(){
+        
+    })
 })
